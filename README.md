@@ -1,9 +1,5 @@
+// App.jsx
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import AppNavBar from "./components/AppNavBar";
-import ProfileList from "./components/ProfileList";
-import ProfileDetails from "./components/ProfileDetails";
-import { Spinner } from "react-bootstrap";
 import "./App.css";
 
 function App() {
@@ -11,32 +7,35 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("https://jsonplaceholder.typicode.com/users/")
-      .then((res) => res.json())
-      .then((res) => {
-        setUsers(res);
+    fetch("https://jsonplaceholder.typicode.com/users")
+      .then((response) => response.json())
+      .then((data) => {
+        setUsers(data);
         setLoading(false);
       });
   }, []);
 
-  if (loading) {
-    return (
-      <div style={{ width: "100%", textAlign: "center", margin: "5rem auto" }}>
-        <Spinner animation="border" />{" "}
-      </div>
-    );
-  }
-
   return (
-    <Router>
-      <AppNavBar />
-      <Switch>
-        <Route exact path="/">
-          <ProfileList users={users} />
-        </Route>
-        <Route path="/profile/:userID" component={ProfileDetails} />
-      </Switch>
-    </Router>
+    <div className="App">
+      <header>
+        <h1>User List</h1>
+      </header>
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <ul>
+          {users.map((user) => (
+            <li key={user.id}>
+              <h3>{user.name}</h3>
+              <p>{user.email}</p>
+              <a href={`http://${user.website}`} target="_blank" rel="noopener noreferrer">
+                Visit Website
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
 
